@@ -1,1 +1,66 @@
 .hero-visual{background-image:linear-gradient(135deg,rgba(7,17,31,.3),rgba(7,17,31,.82)),url("./assets/sales-flow-network.png")}
+
+body{overflow-x:hidden;font-size:16px}
+.hero>*{min-width:0}
+.hero-copy h1,.hero-copy .intro,.flow-summary{overflow-wrap:anywhere}
+.hero .actions .button{max-width:100%}
+.kicker,.form-progress,.step-heading>b,.red-label,.cyan-label,.product-window>small,.features b{font-size:14px!important}
+.hero-visual.flow-story{display:grid;min-height:0;padding:0;background-color:#07111f;background-position:center;isolation:isolate}
+.flow-story:after{content:"";position:absolute;inset:0;background:rgba(3,12,25,.72);pointer-events:none;z-index:-1}
+.flow-stage{display:grid;grid-template-columns:minmax(0,.76fr) minmax(0,1.24fr);gap:24px;align-items:center;padding:25px 28px;border-bottom:1px solid rgba(40,215,229,.52);min-width:0}
+.flow-stage>div,.flow-stage .message{min-width:0}
+.flow-stage b,.step-number{display:inline-grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--cyan);color:#07111f;font-size:1.35rem;font-weight:900}
+.flow-stage h3{margin:10px 0 2px;font-size:clamp(1.3rem,2.3vw,2rem)}
+.flow-stage h3 em{font-style:normal;color:var(--cyan)}
+.flow-stage>div>p{margin:0;color:var(--muted);font-size:14px}
+.message{position:relative;width:auto!important;max-width:none!important;margin:0!important;padding:18px 20px!important;border:1px solid transparent;border-radius:18px!important;font-size:clamp(1rem,1.6vw,1.2rem);line-height:1.55;overflow-wrap:anywhere}
+.flow-stage .customer{justify-self:start;min-width:min(100%,180px)}
+.flow-stage .modern{justify-self:end}
+.message span{display:block;width:max-content;margin:-31px 0 11px -4px;padding:3px 8px;border-radius:6px;background:#087b87;color:#fff;font-size:14px;font-weight:800;line-height:1.3}
+.flow-summary{margin:0;padding:22px 28px;color:var(--muted);font-size:clamp(1.05rem,2vw,1.4rem);text-align:center}
+.flow-summary strong{color:var(--cyan)}
+
+.reframe .compare{margin-top:34px;border-radius:16px}
+.compare article header{display:flex;align-items:center;justify-content:space-between;gap:18px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.compare article header p{margin:0!important;border:0!important;font-size:clamp(1rem,2vw,1.45rem)!important}
+.compare article header b{color:var(--muted);font-size:14px;white-space:nowrap}
+.compare .old-sales{border-color:rgba(251,113,133,.55);background:rgba(251,113,133,.07)}
+.compare .modern-sales{border-color:rgba(40,215,229,.55);background:rgba(40,215,229,.08)}
+.reframe-close,.industry-close,.conversation-close{margin:42px 0 0;padding:21px 0;border-block:1px solid var(--cyan);color:var(--cyan);font-size:clamp(1.3rem,3vw,2rem);font-weight:900}
+
+.conversation>p:not(.old-callout):not(.conversation-close){max-width:760px;color:#526477;font-size:clamp(1rem,2vw,1.2rem)}
+.old-callout{max-width:760px;margin:30px 0!important;padding:16px 20px;border:1px solid #edb9b9;border-radius:14px;background:#fff1f1;color:#b44349;font-size:clamp(1rem,2vw,1.18rem)}
+.teaching-steps{max-width:980px}
+.teaching-steps article{display:grid;grid-template-columns:62px minmax(130px,.6fr) minmax(0,1.6fr);gap:22px;align-items:center;padding:25px 0;border-bottom:1px solid #d1dce5;min-width:0}
+.teaching-steps h3{margin:0;font-size:clamp(1.15rem,2vw,1.55rem)}
+.teaching-steps .message{justify-self:stretch;border-color:#bfe9ed}
+.teaching-steps .customer{background:#f1f5f7!important}
+.conversation-close{color:#132a47;border-color:#d1dce5}
+
+.industries h2{margin-bottom:12px}
+.industry-lead{font-size:clamp(1.15rem,2.4vw,1.65rem);font-weight:800}
+.industry-intro{margin-top:38px;color:var(--muted);font-size:clamp(1.05rem,2vw,1.3rem)}
+.industry-groups{margin-top:24px}
+.industry-groups article{display:grid;grid-template-columns:110px minmax(0,1fr);gap:24px;padding:30px 0;border-bottom:1px solid rgba(40,215,229,.64);min-width:0}
+.industry-groups article>b{color:var(--cyan);font-size:clamp(1.7rem,3vw,2.45rem)}
+.industry-groups h3{margin:0;color:var(--cyan);font-size:clamp(1.35rem,2.7vw,2rem)}
+.industry-groups ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 28px;margin:17px 0;padding-left:24px;font-size:clamp(1.05rem,2vw,1.3rem);font-weight:800}
+.industry-groups li::marker{color:var(--cyan)}
+.industry-groups p{margin:0;color:var(--muted);font-size:clamp(1rem,1.8vw,1.2rem)}
+
+@media(max-width:600px){
+  .hero{padding-inline:16px}
+  .hero .actions .button{width:100%}
+  .hero-visual.flow-story{margin-inline:0}
+  .flow-stage{grid-template-columns:1fr;gap:16px;padding:24px 18px}
+  .flow-stage .modern,.flow-stage .customer{justify-self:stretch}
+  .message{padding:16px!important;font-size:16px}
+  .flow-summary{padding:20px 16px;font-size:1.05rem}
+  .compare article{padding:22px 18px}
+  .compare article header{align-items:flex-start;flex-direction:column;gap:5px}
+  .teaching-steps article{grid-template-columns:48px minmax(0,1fr);gap:12px;padding:22px 0}
+  .teaching-steps .message{grid-column:1 / -1}
+  .step-number{width:40px;height:40px;font-size:1.2rem}
+  .industry-groups article{grid-template-columns:56px minmax(0,1fr);gap:14px;padding:25px 0}
+  .industry-groups ul{grid-template-columns:1fr;margin:14px 0;padding-left:20px}
+}

@@ -1,0 +1,12 @@
+@media(max-width:900px){
+  .hero{grid-template-columns:minmax(0,1fr)!important;min-width:0;width:100%}
+  .hero-visual{width:100%;max-width:100%;min-width:0}
+}
+
+@media(max-width:600px){
+  .hero-copy{min-width:0;width:100%}
+  .hero-copy h1{font-size:32px;letter-spacing:-.04em;word-break:break-word}
+  .hero-copy h1 em{overflow-wrap:anywhere;word-break:break-word}
+  .hero-copy .intro{overflow-wrap:anywhere}
+  .flow-story,.flow-stage,.flow-stage .message{max-width:100%;min-width:0}
+}
