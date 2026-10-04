@@ -58,6 +58,21 @@ export function loadCampaign(location, storage) {
   return context;
 }
 
+// Measures only the conversion action. Contact details and message content are
+// deliberately excluded from the OpenAI Ads event payload.
+export function measureOpenAILeadCreated() {
+  if (typeof globalThis.window?.oaiq !== 'function') return false;
+  const uuid = globalThis.crypto?.randomUUID?.();
+  const eventId = `lead_${uuid || `${Date.now()}_${Math.random().toString(36).slice(2)}`}`;
+  globalThis.window.oaiq(
+    'measure',
+    'lead_created',
+    { type: 'customer_action' },
+    { event_id: eventId },
+  );
+  return true;
+}
+
 // Local no-op-safe adapter; no remote analytics provider is installed.
 // Campaign/angle context only. Form values and message text never enter analytics.
 export function track(name, context = {}, detail = {}) {

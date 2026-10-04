@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { validateEnquiry, enquiryMessage, whatsappUrl, campaignContext, loadCampaign } from '../src/landing/conversion.js';
+import { validateEnquiry, enquiryMessage, whatsappUrl, campaignContext, loadCampaign, measureOpenAILeadCreated } from '../src/landing/conversion.js';
 
 test('validates the contact form and preserves readable Chinese and English',()=>{
   const result = validateEnquiry({name:'  Boss 陈  ',phone:'+60 12-345 6789',company:'ABC\nSME',problem:'报价后 & Follow Up?',intent:'看 2ndU Demo'});
@@ -39,4 +39,22 @@ test('corrupt or blocked session storage cannot stop rendering',()=>{
   assert.deepEqual(loadCampaign({search:'?angle=price'},corrupt),{angle:'price'});
   const blocked={getItem:()=>{throw new Error('blocked')},setItem:()=>{throw new Error('blocked')}};
   assert.deepEqual(loadCampaign({search:''},blocked),{});
+});
+
+test('OpenAI lead conversion sends no form values or personal data',()=>{
+  const calls = [];
+  const previousWindow = globalThis.window;
+  globalThis.window = { oaiq: (...args) => calls.push(args) };
+  try {
+    assert.equal(measureOpenAILeadCreated(), true);
+  } finally {
+    if (previousWindow === undefined) delete globalThis.window;
+    else globalThis.window = previousWindow;
+  }
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0][0], 'measure');
+  assert.equal(calls[0][1], 'lead_created');
+  assert.deepEqual(calls[0][2], { type: 'customer_action' });
+  assert.match(calls[0][3].event_id, /^lead_/);
+  assert.deepEqual(Object.keys(calls[0][2]), ['type']);
 });

@@ -1,7 +1,7 @@
 import './style.css';
 import { angles } from './content.js';
 import { header, hero, painSection, methodSection, solutionSection, industrySection, reviewSection, faqSection, footer } from './sections.js';
-import { DEFAULT_WHATSAPP_NUMBER, INTENTS, enquiryMessage, whatsappUrl, validateEnquiry, loadCampaign, track } from './conversion.js';
+import { DEFAULT_WHATSAPP_NUMBER, INTENTS, enquiryMessage, whatsappUrl, validateEnquiry, loadCampaign, measureOpenAILeadCreated, track } from './conversion.js';
 
 document.querySelector('#app').innerHTML = header() + '<main id="main" tabindex="-1">' + [hero, painSection, methodSection, solutionSection, industrySection, reviewSection, faqSection].map(section=>section()).join('') + '</main>' + footer();
 
@@ -71,7 +71,15 @@ form.addEventListener('submit',event=>{
   document.querySelector('.enquiry-card').scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
   track('lead_form_ready', context);
 });
-document.querySelector('#send-whatsapp').addEventListener('click',()=>track('whatsapp_clicked',context,{source:'form'}));
+let leadCompletionTracked = false;
+document.querySelector('#send-whatsapp').addEventListener('click',()=>{
+  track('whatsapp_clicked',context,{source:'form'});
+  if (!leadCompletionTracked) {
+    track('lead_form_completed',context);
+    measureOpenAILeadCreated();
+    leadCompletionTracked = true;
+  }
+});
 document.querySelector('#edit-message').addEventListener('click',()=>{
   ready.hidden = true;
   form.hidden = false;
