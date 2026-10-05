@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { validateEnquiry, enquiryMessage, whatsappUrl, campaignContext, loadCampaign } from '../src/landing/conversion.js';
+import { validateEnquiry, enquiryMessage, whatsappUrl, campaignContext, loadCampaign, measureOpenAILeadCreated } from '../src/landing/conversion.js';
 
 test('validates the contact form and preserves readable Chinese and English',()=>{
   const result = validateEnquiry({name:'  Boss 陈  ',phone:'+60 12-345 6789',company:'ABC\nSME',problem:'报价后 & Follow Up?',intent:'看 2ndU Demo'});
@@ -39,4 +39,42 @@ test('corrupt or blocked session storage cannot stop rendering',()=>{
   assert.deepEqual(loadCampaign({search:'?angle=price'},corrupt),{angle:'price'});
   const blocked={getItem:()=>{throw new Error('blocked')},setItem:()=>{throw new Error('blocked')}};
   assert.deepEqual(loadCampaign({search:''},blocked),{});
+});
+
+test('OpenAI lead conversion deduplicates Pixel and server events without personal data',async()=>{
+  const pixelCalls = [];
+  const serverCalls = [];
+  const previousWindow = globalThis.window;
+  globalThis.window = {
+    oaiq: (...args) => pixelCalls.push(args),
+    location: { href: 'https://2ndu.creatiqai.my/?utm_campaign=launch#review' },
+  };
+  try {
+    const result = await measureOpenAILeadCreated({
+      fetcher: async (...args) => {
+        serverCalls.push(args);
+        return { ok: true };
+      },
+    });
+    assert.equal(result.pixelQueued, true);
+    assert.equal(result.serverAccepted, true);
+  } finally {
+    if (previousWindow === undefined) delete globalThis.window;
+    else globalThis.window = previousWindow;
+  }
+  assert.equal(pixelCalls.length, 1);
+  assert.equal(pixelCalls[0][0], 'measure');
+  assert.equal(pixelCalls[0][1], 'lead_created');
+  assert.deepEqual(pixelCalls[0][2], { type: 'customer_action' });
+  assert.match(pixelCalls[0][3].event_id, /^lead_/);
+
+  assert.equal(serverCalls.length, 1);
+  const [endpoint, request] = serverCalls[0];
+  assert.equal(endpoint, 'https://creatiq-openai-conversions.eprop-steven.workers.dev/');
+  assert.equal(request.method, 'POST');
+  assert.equal(request.keepalive, true);
+  const payload = JSON.parse(request.body);
+  assert.equal(payload.event_id, pixelCalls[0][3].event_id);
+  assert.equal(payload.source_url, 'https://2ndu.creatiqai.my/?utm_campaign=launch');
+  assert.deepEqual(Object.keys(payload).sort(), ['event_id', 'source_url']);
 });

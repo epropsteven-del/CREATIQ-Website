@@ -13,6 +13,34 @@
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <title>Modern Sales Flow | CREATIQ AI Solutions</title>
+    <!-- OpenAI Ads Measurement Pixel -->
+    <script>
+      (function (window, document, tagName, source) {
+        if (window.oaiq) return;
+        var queue = function () {
+          queue.q.push(arguments);
+        };
+        queue.q = [];
+        window.oaiq = queue;
+        var script = document.createElement(tagName);
+        script.async = true;
+        script.src = source;
+        var firstScript = document.getElementsByTagName(tagName)[0];
+        firstScript.parentNode.insertBefore(script, firstScript);
+      })(window, document, "script", "https://bzrcdn.openai.com/sdk/oaiq.min.js");
+      oaiq("init", { pixelId: "G5MnoTLFbsUzwXN7DG9Wgx" });
+      oaiq("measure", "page_viewed", {
+        type: "contents",
+        contents: [
+          {
+            id: "modern-sales-flow",
+            name: "Modern Sales Flow | CREATIQ AI Solutions",
+            content_type: "page",
+          },
+        ],
+      });
+    </script>
+    <!-- End OpenAI Ads Measurement Pixel -->
     <!-- Meta Pixel Code -->
     <script>
       !function(f,b,e,v,n,t,s)
