@@ -76,7 +76,7 @@ document.querySelector('#send-whatsapp').addEventListener('click',()=>{
   track('whatsapp_clicked',context,{source:'form'});
   if (!leadCompletionTracked) {
     track('lead_form_completed',context);
-    measureOpenAILeadCreated();
+    void measureOpenAILeadCreated();
     leadCompletionTracked = true;
   }
 });

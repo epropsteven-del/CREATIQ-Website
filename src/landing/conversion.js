@@ -1,4 +1,5 @@
 export const DEFAULT_WHATSAPP_NUMBER = '60162282431';
+export const OPENAI_CONVERSIONS_ENDPOINT = 'https://creatiq-openai-conversions.eprop-steven.workers.dev/';
 export const INTENTS = ['免费 Sales Flow Review', '看 2ndU Demo', '免费咨询'];
 const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
 const ANGLES = ['speed', 'price', 'followup', 'topsales', 'leads', 'ai-human'];
@@ -58,19 +59,48 @@ export function loadCampaign(location, storage) {
   return context;
 }
 
-// Measures only the conversion action. Contact details and message content are
-// deliberately excluded from the OpenAI Ads event payload.
-export function measureOpenAILeadCreated() {
-  if (typeof globalThis.window?.oaiq !== 'function') return false;
+// Measures only the conversion action. Contact details, message content, and
+// browser cookies are deliberately excluded. The same event ID is sent through
+// both channels so OpenAI can deduplicate the Pixel and server deliveries.
+export async function measureOpenAILeadCreated(options = {}) {
   const uuid = globalThis.crypto?.randomUUID?.();
   const eventId = `lead_${uuid || `${Date.now()}_${Math.random().toString(36).slice(2)}`}`;
-  globalThis.window.oaiq(
-    'measure',
-    'lead_created',
-    { type: 'customer_action' },
-    { event_id: eventId },
-  );
-  return true;
+  const pixel = options.pixel ?? globalThis.window?.oaiq;
+  const fetcher = options.fetcher ?? globalThis.fetch;
+  let sourceUrl = options.sourceUrl ?? globalThis.window?.location?.href ?? '';
+
+  if (typeof pixel === 'function') {
+    pixel(
+      'measure',
+      'lead_created',
+      { type: 'customer_action' },
+      { event_id: eventId },
+    );
+  }
+
+  try {
+    const parsedUrl = new URL(sourceUrl);
+    parsedUrl.hash = '';
+    sourceUrl = parsedUrl.href;
+  } catch {
+    return { eventId, pixelQueued: typeof pixel === 'function', serverAccepted: false };
+  }
+
+  if (typeof fetcher !== 'function') {
+    return { eventId, pixelQueued: typeof pixel === 'function', serverAccepted: false };
+  }
+
+  try {
+    const response = await fetcher(options.endpoint ?? OPENAI_CONVERSIONS_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ event_id: eventId, source_url: sourceUrl }),
+      keepalive: true,
+    });
+    return { eventId, pixelQueued: typeof pixel === 'function', serverAccepted: response.ok };
+  } catch {
+    return { eventId, pixelQueued: typeof pixel === 'function', serverAccepted: false };
+  }
 }
 
 // Local no-op-safe adapter; no remote analytics provider is installed.
